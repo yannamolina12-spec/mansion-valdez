@@ -1,40 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mansión Embrujada - Misterio Interactivo</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>El Misterio de la Mansión Valdez</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="game-container">
-        <!-- Canvas para el juego -->
-        <canvas id="gameCanvas" width="1200" height="700"></canvas>
-        
-        <!-- Interfaz del juego -->
-        <div class="ui">
-            <div class="inventory">
-                <h3>Inventario</h3>
-                <div id="inventoryItems"></div>
-            </div>
-            <div class="dialogue">
-                <div id="dialogueText"></div>
-                <div id="dialogueOptions"></div>
-            </div>
-            <div class="status">
-                <div>Pista: <span id="hint"></span></div>
-                <div>Progreso: <span id="progress">0/5</span></div>
-            </div>
-        </div>
+  <div id="game-container">
+    <canvas id="game" width="640" height="480"></canvas>
+
+    <!-- Pantalla de inicio -->
+    <div id="start-screen" class="overlay">
+      <h1>🔍 El Misterio de la Mansión Valdez</h1>
+      <p class="story">
+        Una joya muy valiosa ha sido robada de la mansión del Sr. Valdez.<br>
+        Tú eres el detective encargado del caso.<br>
+        Explora las habitaciones, encuentra pistas,<br>
+        resuelve los puzzles y descubre al culpable.
+      </p>
+      <div class="controls">
+        <p><strong>CONTROLES</strong></p>
+        <p>Flechas o WASD — Moverse</p>
+        <p>E o ESPACIO — Interactuar / Continuar</p>
+      </div>
+      <button id="start-btn">🎮 Comenzar investigación</button>
+      <button id="mute-btn">🔊 Música: ON</button>
     </div>
 
-    <audio id="bgMusic" loop>
-        <source src="assets/audio/mystery-bg.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="successSound">
-        <source src="assets/audio/success.mp3" type="audio/mpeg">
-    </audio>
+    <!-- HUD -->
+    <div id="hud">
+      <div id="location">📍 —</div>
+      <div id="inventory">🎒 vacío</div>
+    </div>
 
-    <script src="script.js"></script>
+    <!-- Diálogos -->
+    <div id="dialog-box" class="hidden">
+      <p id="dialog-text"></p>
+      <p class="continue-hint">▸ Presiona E o clic para continuar</p>
+    </div>
+
+    <!-- Puzzles -->
+    <div id="puzzle-overlay" class="hidden">
+      <div id="puzzle-content"></div>
+    </div>
+
+    <!-- Pantalla final -->
+    <div id="end-screen" class="overlay hidden">
+      <h1>🏆 ¡Caso Resuelto!</h1>
+      <p id="end-text"></p>
+      <button onclick="location.reload()">Jugar de nuevo</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
 </body>
 </html>
