@@ -3,715 +3,452 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#1a1a2e">
     <title>El Misterio de la Mansión Valdez</title>
     <style>
-        /* CSS UNIFICADO Y MEJORADO */
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            user-select: none;
+            margin: 0; padding: 0; box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; user-select: none;
         }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #0a0a18;
-        }
-
         body {
-            background: radial-gradient(circle, #1a1a2e 0%, #070710 100%);
+            background: #05050a;
             font-family: 'Courier New', Courier, monospace;
             color: #f0e6d2;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100dvh;
+            display: flex; justify-content: center; align-items: center;
+            height: 100dvh; overflow: hidden;
             touch-action: manipulation;
         }
-
         #game-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
+            position: relative; width: 100vw; height: 100dvh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
-
         canvas {
             image-rendering: pixelated;
-            image-rendering: crisp-edges;
-            display: block;
-            background: #1a0f0a;
-            max-width: 95vw;
-            max-height: 65dvh;
+            background: #000;
+            max-width: 95vw; max-height: 60dvh;
             aspect-ratio: 4 / 3;
-            border: 4px solid #5a3a1a;
-            outline: 2px solid #ffd700;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(139, 69, 19, 0.3);
+            border: 4px solid #3a2a1a;
+            outline: 2px solid #d4af37;
+            box-shadow: 0 0 50px rgba(0,0,0,0.9);
             z-index: 1;
         }
-
         /* HUD */
         #hud {
-            position: absolute;
-            top: 15px;
-            left: 0;
-            right: 0;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            pointer-events: none;
-            z-index: 10;
-            font-weight: bold;
+            position: absolute; top: 10px; left: 0; right: 0;
+            padding: 0 15px; display: flex; justify-content: space-between;
+            pointer-events: none; z-index: 10;
         }
-
         .hud-item {
-            background: rgba(15, 15, 25, 0.85);
-            padding: 8px 12px;
-            border: 2px solid #ffd700;
-            border-radius: 4px;
-            font-size: 12px;
-            box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
-            color: #ffd700;
-            max-width: 45%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            background: rgba(10, 10, 20, 0.9);
+            padding: 6px 12px; border: 1px solid #d4af37;
+            border-radius: 2px; font-size: 11px; color: #d4af37;
+            box-shadow: 2px 2px 0 #000;
         }
-
-        /* CONTROLES TÁCTILES */
+        /* CONTROLES */
         #touch-controls {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 20;
-            pointer-events: none;
+            position: fixed; bottom: 20px; left: 15px; right: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 20; pointer-events: none;
         }
-
-        #dpad {
-            display: grid;
-            grid-template-areas: 
-                ". up ."
-                "left . right"
-                ". down .";
-            gap: 5px;
-            pointer-events: auto;
-        }
-
+        #dpad { display: grid; grid-template-areas: ". u ." "l . r" ". d ."; gap: 8px; pointer-events: auto; }
         .dpad-btn {
-            width: 55px;
-            height: 55px;
-            background: #4a2f1a;
-            border: 3px solid #ffd700;
-            color: #ffd700;
-            font-size: 24px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px 0 #2a1a0a;
-            transition: transform 0.1s;
+            width: 50px; height: 50px; background: #2a1a0a;
+            border: 2px solid #d4af37; color: #d4af37; font-size: 20px;
+            border-radius: 4px; display: flex; justify-content: center; align-items: center;
         }
-
-        .dpad-btn:active, .dpad-btn.pressed {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #2a1a0a;
-            background: #6a4a2a;
-        }
-
-        .dpad-up { grid-area: up; }
-        .dpad-down { grid-area: down; }
-        .dpad-left { grid-area: left; }
-        .dpad-right { grid-area: right; }
-
+        .dpad-btn:active { background: #4a3a1a; transform: scale(0.9); }
+        .dpad-u { grid-area: u; } .dpad-d { grid-area: d; } .dpad-l { grid-area: l; } .dpad-r { grid-area: r; }
         #action-btn {
-            width: 85px;
-            height: 85px;
-            background: #8b0000;
-            border: 4px solid #ffd700;
-            color: #ffd700;
-            border-radius: 50%;
-            font-size: 32px;
-            font-weight: bold;
-            font-family: inherit;
-            pointer-events: auto;
-            box-shadow: 0 6px 0 #4a0000, 0 10px 20px rgba(0,0,0,0.4);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 70px; height: 70px; background: #600;
+            border: 3px solid #d4af37; color: #fff; border-radius: 50%;
+            font-weight: bold; pointer-events: auto; box-shadow: 0 4px 0 #300;
         }
-
-        #action-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #4a0000;
-            background: #a00000;
-        }
-
+        #action-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #000; }
         /* OVERLAYS */
         .overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(10, 10, 20, 0.95);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            padding: 30px;
-            text-align: center;
-            border: 8px double #ffd700;
-            margin: 10px;
+            position: absolute; inset: 0; background: rgba(5, 5, 10, 0.98);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 100; padding: 20px; text-align: center; border: 4px double #d4af37; margin: 10px;
         }
-
-        .overlay h1 {
-            color: #ffd700;
-            font-size: 28px;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 3px 3px 0 #000;
-        }
-
-        .story { margin-bottom: 20px; line-height: 1.6; max-width: 500px; }
-
-        .controls-info {
-            background: rgba(0,0,0,0.4);
-            padding: 15px;
-            border: 1px dashed #ffd700;
-            margin-bottom: 25px;
-            font-size: 13px;
-        }
-
+        .overlay h1 { color: #d4af37; font-size: 22px; margin-bottom: 15px; text-shadow: 2px 2px 0 #000; }
+        .story { font-size: 13px; line-height: 1.4; margin-bottom: 20px; max-width: 400px; color: #c0c0c0; }
         button.menu-btn {
-            background: #5a3a1a;
-            color: #ffd700;
-            border: 3px solid #ffd700;
-            padding: 12px 25px;
-            font-family: inherit;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 4px;
-            box-shadow: 4px 4px 0 #000;
-            transition: all 0.2s;
+            background: #3a2a1a; color: #d4af37; border: 2px solid #d4af37;
+            padding: 10px 20px; font-family: inherit; font-weight: bold; cursor: pointer;
         }
-
-        button.menu-btn:hover { background: #7a4a2a; transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #000; }
-        button.menu-btn:active { transform: translate(2px, 2px); box-shadow: 0 0 0 #000; }
-
-        /* CAJA DE DIÁLOGO */
+        /* DIALOGUE */
         #dialog-box {
-            position: absolute;
-            bottom: 180px;
-            left: 20px;
-            right: 20px;
-            background: #1a1a2e;
-            border: 4px double #ffd700;
-            padding: 15px 20px;
-            z-index: 50;
-            max-width: 600px;
-            margin: 0 auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            position: absolute; bottom: 160px; left: 15px; right: 15px;
+            background: #0a0a14; border: 2px solid #d4af37; padding: 12px;
+            z-index: 50; max-width: 500px; margin: 0 auto; box-shadow: 0 5px 15px #000;
         }
-
-        #dialog-text { font-size: 14px; line-height: 1.6; min-height: 3em; }
-        .continue-hint { font-size: 10px; color: #ffd700; text-align: right; margin-top: 8px; opacity: 0.7; animation: blink 1s infinite; }
-
-        /* PUZZLES */
-        #puzzle-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 150;
-        }
-
-        #puzzle-window {
-            background: #2c1810;
-            border: 4px solid #ffd700;
-            padding: 25px;
-            width: 90%;
-            max-width: 350px;
-            text-align: center;
-        }
-
-        .puzzle-input {
-            width: 100%;
-            padding: 12px;
-            background: #1a0f0a;
-            border: 2px solid #ffd700;
-            color: #ffd700;
-            font-family: inherit;
-            font-size: 24px;
-            text-align: center;
-            margin: 15px 0;
-        }
-
+        #dialog-text { font-size: 13px; line-height: 1.4; }
         .hidden { display: none !important; }
-
-        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        #puzzle-overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.95);
+            display: flex; justify-content: center; align-items: center; z-index: 150;
+        }
+        .puzzle-box { background: #1a0f0a; border: 3px solid #d4af37; padding: 20px; text-align: center; }
+        .puzzle-input { 
+            width: 120px; background: #000; border: 1px solid #d4af37; 
+            color: #d4af37; font-size: 24px; text-align: center; margin: 10px; padding: 5px;
+        }
     </style>
 </head>
 <body>
 
     <div id="game-container">
-        <!-- HUD -->
         <div id="hud">
-            <div id="location" class="hud-item">📍 Mansión Valdez</div>
-            <div id="inventory" class="hud-item">🎒 vacío</div>
+            <div id="location" class="hud-item">📍 Cargando...</div>
+            <div id="inventory" class="hud-item">🎒 Vacío</div>
         </div>
 
         <canvas id="game" width="640" height="480"></canvas>
 
-        <!-- CONTROLES TÁCTILES -->
         <div id="touch-controls" class="hidden">
             <div id="dpad">
-                <button class="dpad-btn dpad-up" data-dir="up">▲</button>
-                <button class="dpad-btn dpad-left" data-dir="left">◀</button>
-                <button class="dpad-btn dpad-right" data-dir="right">▶</button>
-                <button class="dpad-btn dpad-down" data-dir="down">▼</button>
+                <button class="dpad-btn dpad-u" data-dir="up">▲</button>
+                <button class="dpad-btn dpad-l" data-dir="left">◀</button>
+                <button class="dpad-btn dpad-r" data-dir="right">▶</button>
+                <button class="dpad-btn dpad-d" data-dir="down">▼</button>
             </div>
             <button id="action-btn">ACC</button>
         </div>
 
-        <!-- DIÁLOGO -->
         <div id="dialog-box" class="hidden">
             <p id="dialog-text"></p>
-            <p class="continue-hint">▸ Toca para continuar</p>
+            <p style="font-size:9px; color:#d4af37; text-align:right; margin-top:5px;">[Toca para continuar]</p>
         </div>
 
-        <!-- OVERLAY INICIO -->
         <div id="start-screen" class="overlay">
-            <h1>🔍 EL MISTERIO DE LA<br>MANSIÓN VALDEZ</h1>
+            <h1>EL MISTERIO DE VALDEZ</h1>
             <p class="story">
-                Una valiosa joya ha desaparecido. Los sospechosos guardan silencio y las pistas están ocultas bajo el polvo de la historia. Detective, su investigación comienza ahora.
+                La joya "Lágrima de Sangre" ha sido robada. <br><br>
+                Investiga la mansión, busca pistas ocultas en las sombras y resuelve los acertijos. Ten cuidado: no todo lo que brilla es oro.
             </p>
-            <div class="controls-info">
-                📱 D-pad para moverte | ACC para interactuar<br>
-                💻 Flechas/WASD | E o Espacio
-            </div>
-            <button id="start-btn" class="menu-btn">COMENZAR CASO</button>
-            <button id="mute-btn" class="menu-btn" style="margin-top: 10px; font-size: 12px; padding: 5px 15px;">🔊 MÚSICA: ON</button>
+            <button id="start-btn" class="menu-btn">INICIAR INVESTIGACIÓN</button>
+            <button id="audio-toggle" class="menu-btn" style="margin-top:10px; font-size:10px;">🔊 SONIDO: ACTIVADO</button>
         </div>
 
-        <!-- OVERLAY FINAL -->
         <div id="end-screen" class="overlay hidden">
-            <h1>🏆 CASO RESUELTO</h1>
+            <h1>CASO CERRADO</h1>
             <p id="end-text" class="story"></p>
-            <button class="menu-btn" onclick="location.reload()">REINTENTAR</button>
+            <button class="menu-btn" onclick="location.reload()">NUEVO CASO</button>
         </div>
 
-        <!-- PUZZLE -->
         <div id="puzzle-overlay" class="hidden">
-            <div id="puzzle-window">
-                <div id="puzzle-content"></div>
+            <div class="puzzle-box">
+                <h2 id="p-title" style="color:#d4af37; font-size:16px;"></h2>
+                <p id="p-desc" style="font-size:12px; margin:10px 0;"></p>
+                <input type="text" id="p-input" class="puzzle-input" maxlength="6">
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button id="p-check" class="menu-btn">CONFIRMAR</button>
+                    <button id="p-cancel" class="menu-btn" style="background:#222;">CERRAR</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // JS UNIFICADO
+        // CONFIGURACIÓN AUDIO (Sintetizador Procedural)
+        let audioCtx = null;
+        let masterGain = null;
+        let isMuted = false;
+
+        function initAudio() {
+            if (audioCtx) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            masterGain = audioCtx.createGain();
+            masterGain.gain.value = 0.1;
+            masterGain.connect(audioCtx.destination);
+            
+            // Bucle de música de tensión
+            setInterval(() => {
+                if(game.state === 'playing' && !isMuted) playNote(110 + Math.random() * 20, 1.5, 'triangle');
+            }, 2000);
+            
+            setInterval(() => {
+                if(game.state === 'playing' && !isMuted && Math.random() > 0.7) playNote(440 + Math.random() * 100, 0.1, 'sine');
+            }, 500);
+        }
+
+        function playNote(freq, dur, type = 'sine') {
+            if (!audioCtx || isMuted) return;
+            const osc = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            g.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+            osc.connect(g);
+            g.connect(masterGain);
+            osc.start();
+            osc.stop(audioCtx.currentTime + dur);
+        }
+
+        // LÓGICA DE JUEGO
         const canvas = document.getElementById('game');
         const ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = false;
-
-        const startScreen = document.getElementById('start-screen');
         const startBtn = document.getElementById('start-btn');
-        const muteBtn = document.getElementById('mute-btn');
-        const dialogBox = document.getElementById('dialog-box');
-        const dialogText = document.getElementById('dialog-text');
-        const puzzleOverlay = document.getElementById('puzzle-overlay');
-        const puzzleContent = document.getElementById('puzzle-content');
-        const locationEl = document.getElementById('location');
-        const inventoryEl = document.getElementById('inventory');
-        const endScreen = document.getElementById('end-screen');
-        const endText = document.getElementById('end-text');
-        const touchControls = document.getElementById('touch-controls');
+        const audioToggle = document.getElementById('audio-toggle');
         const actionBtn = document.getElementById('action-btn');
-
-        // ESTADO
+        
         const game = {
             state: 'menu',
             currentRoom: 'entrada',
             inventory: [],
             flags: {
-                notaLeida: false,
-                llaveEncontrada: false,
+                nota: false,
+                llave: false,
                 bibliotecaAbierta: false,
-                librosLeidos: 0,
-                relojMirado: false,
-                estudioAbierto: false,
-                cuadroMirado: false,
-                escritorioMirado: false,
-                culpableDescubierto: false
+                pistaReloj: false,
+                pistaCuadro: false,
+                pistaLibro: false,
+                cajaFuerteIntento: 0
             }
         };
 
-        const player = {
-            x: 320, y: 380, w: 24, h: 32,
-            speed: 2.2, dir: 'up',
-            frame: 0, frameTimer: 0, moving: false
-        };
+        const player = { x: 320, y: 400, w: 20, h: 30, speed: 2.5, dir: 'up' };
+        const keys = { up: false, down: false, left: false, right: false };
 
-        const input = { up: false, down: false, left: false, right: false };
-
-        // HABITACIONES (Se mantienen igual pero con lógica de render mejorada)
         const rooms = {
             entrada: {
-                name: 'Vestíbulo Principal',
-                floor: '#3d251e', wall: '#2a1a10',
+                name: 'Vestíbulo Oscuro',
+                floor: '#1a1a1a', wall: '#0a0a0a',
                 objects: [
-                    { id: 'mesa', x: 260, y: 110, w: 80, h: 46, label: 'Mesa tallada', draw: drawTable, action: 'readNote' },
-                    { id: 'alfombra', x: 250, y: 280, w: 140, h: 90, label: 'Alfombra persa', draw: drawRug, action: 'searchRug' },
-                    { id: 'maceta', x: 70, y: 110, w: 40, h: 60, label: 'Planta marchita', draw: drawPot, action: 'lookPot' },
-                    { id: 'puertaBib', x: 580, y: 190, w: 40, h: 80, label: 'Puerta Biblioteca', draw: drawDoor, action: 'goLibrary' }
+                    { id: 'armadura', x: 80, y: 110, w: 40, h: 60, label: 'Armadura Antigua', action: 'lookArmor' },
+                    { id: 'chimenea', x: 260, y: 70, w: 120, h: 80, label: 'Chimenea Apagada', action: 'lookFire' },
+                    { id: 'alfombra', x: 240, y: 300, w: 160, h: 100, label: 'Alfombra Manchada', action: 'checkRug' },
+                    { id: 'puertaBib', x: 580, y: 180, w: 40, h: 100, label: 'Puerta de Roble', action: 'enterBib' }
                 ],
-                playerStart: { x: 320, y: 380, dir: 'up' }
+                start: { x: 320, y: 420 }
             },
             biblioteca: {
-                name: 'Gran Biblioteca',
-                floor: '#2a1b0a', wall: '#1a0f05',
+                name: 'Biblioteca del Silencio',
+                floor: '#221108', wall: '#110804',
                 objects: [
-                    { id: 'libro1', x: 100, y: 110, w: 46, h: 70, label: 'Crónicas Rojas', draw: drawBook, action: 'readBook1' },
-                    { id: 'libro2', x: 200, y: 110, w: 46, h: 70, label: 'Secretos Azules', draw: drawBook, action: 'readBook2' },
-                    { id: 'libro3', x: 300, y: 110, w: 46, h: 70, label: 'Memorias Verdes', draw: drawBook, action: 'readBook3' },
-                    { id: 'reloj', x: 440, y: 100, w: 70, h: 90, label: 'Reloj de Pared', draw: drawClock, action: 'lookClock' },
-                    { id: 'puertaEst', x: 580, y: 190, w: 40, h: 80, label: 'Hacia el Estudio', draw: drawDoor, action: 'goStudy' },
-                    { id: 'puertaEnt', x: 20, y: 190, w: 40, h: 80, label: 'Regresar al Vestíbulo', draw: drawDoor, action: 'goEntrance' }
+                    { id: 'estante1', x: 60, y: 100, w: 100, h: 40, label: 'Sección de Historia', action: 'readHist' },
+                    { id: 'reloj', x: 300, y: 80, w: 40, h: 80, label: 'Reloj de Pie', action: 'lookClock' },
+                    { id: 'escritorio', x: 450, y: 300, w: 100, h: 60, label: 'Escritorio Cerrado', action: 'checkDesk' },
+                    { id: 'puertaEnt', x: 20, y: 180, w: 40, h: 100, label: 'Volver al Vestíbulo', action: 'enterEnt' },
+                    { id: 'puertaEst', x: 580, y: 180, w: 40, h: 100, label: 'Hacia el Estudio', action: 'enterEst' }
                 ],
-                playerStart: { x: 80, y: 280, dir: 'right' }
+                start: { x: 80, y: 230 }
             },
             estudio: {
-                name: 'Estudio del Sr. Valdez',
-                floor: '#1a1005', wall: '#0a0502',
+                name: 'Sanctum de Valdez',
+                floor: '#1a0d00', wall: '#050200',
                 objects: [
-                    { id: 'cuadro', x: 220, y: 90, w: 90, h: 70, label: 'Retrato de 1895', draw: drawPainting, action: 'lookPainting' },
-                    { id: 'cajafuerte', x: 400, y: 120, w: 80, h: 70, label: 'Caja Fuerte Imperial', draw: drawSafe, action: 'openSafe' },
-                    { id: 'escritorio', x: 140, y: 310, w: 120, h: 70, label: 'Escritorio de Caoba', draw: drawDesk, action: 'searchDesk' },
-                    { id: 'puertaBib2', x: 20, y: 190, w: 40, h: 80, label: 'Volver a Biblioteca', draw: drawDoor, action: 'goLibrary' }
+                    { id: 'cuadro', x: 240, y: 80, w: 160, h: 100, label: 'Retrato Familiar', action: 'lookPortrait' },
+                    { id: 'cajafuerte', x: 500, y: 120, w: 60, h: 60, label: 'Caja Fuerte Imperial', action: 'solveSafe' },
+                    { id: 'candelabro', x: 100, y: 350, w: 30, h: 50, label: 'Candelabro de Plata', action: 'lookCandle' },
+                    { id: 'puertaBib2', x: 20, y: 180, w: 40, h: 100, label: 'Regresar', action: 'enterBibFromEst' }
                 ],
-                playerStart: { x: 80, y: 280, dir: 'right' }
+                start: { x: 80, y: 230 }
             }
         };
 
-        // RENDERIZADO DE OBJETOS (Funciones optimizadas)
-        function drawTable(o) {
-            ctx.fillStyle = '#4a2f1a'; ctx.fillRect(o.x, o.y, o.w, 12);
-            ctx.fillStyle = '#2a1a0a'; ctx.fillRect(o.x + 4, o.y + 12, 6, o.h - 12);
-            ctx.fillRect(o.x + o.w - 10, o.y + 12, 6, o.h - 12);
-            ctx.fillStyle = '#f5f0dc'; ctx.fillRect(o.x + 25, o.y - 2, 30, 10);
-        }
-
-        function drawRug(o) {
-            ctx.fillStyle = '#6e1a1a'; ctx.fillRect(o.x, o.y, o.w, o.h);
-            ctx.strokeStyle = '#d4af37'; ctx.lineWidth = 4;
-            ctx.strokeRect(o.x + 8, o.y + 8, o.w - 16, o.h - 16);
-        }
-
-        function drawDoor(o) {
-            ctx.fillStyle = '#3a1f0a'; ctx.fillRect(o.x, o.y, o.w, o.h);
-            ctx.fillStyle = '#ffd700'; ctx.fillRect(o.x + (o.x < 300 ? o.w - 10 : 5), o.y + o.h/2, 6, 6);
-        }
-
-        function drawPot(o) {
-            ctx.fillStyle = '#7a3a0a'; ctx.fillRect(o.x + 10, o.y + 30, 20, 25);
-            ctx.fillStyle = '#2a6a2a'; ctx.beginPath(); ctx.arc(o.x + 20, o.y + 20, 15, 0, Math.PI*2); ctx.fill();
-        }
-
-        function drawBook(o) {
-            const colors = { libro1: '#aa2222', libro2: '#2244aa', libro3: '#228844' };
-            ctx.fillStyle = colors[o.id] || '#aa2222'; ctx.fillRect(o.x, o.y, o.w, o.h);
-            ctx.fillStyle = '#ffd700'; ctx.fillRect(o.x + 5, o.y + 10, o.w - 10, 2);
-        }
-
-        function drawClock(o) {
-            ctx.fillStyle = '#5a3a1a'; ctx.fillRect(o.x, o.y, o.w, o.h);
-            ctx.fillStyle = '#fffce0'; ctx.beginPath(); ctx.arc(o.x+o.w/2, o.y+30, 20, 0, Math.PI*2); ctx.fill();
-            ctx.fillStyle = '#000'; ctx.fillRect(o.x+o.w/2-1, o.y+15, 2, 15);
-        }
-
-        function drawPainting(o) {
-            ctx.fillStyle = '#4a2f1a'; ctx.fillRect(o.x, o.y, o.w, o.h);
-            ctx.fillStyle = '#1a1a1a'; ctx.fillRect(o.x+5, o.y+5, o.w-10, o.h-10);
-            ctx.fillStyle = '#ffd700'; ctx.font = '10px monospace'; ctx.fillText('1895', o.x+30, o.y+o.h-15);
-        }
-
-        function drawSafe(o) {
-            ctx.fillStyle = '#333'; ctx.fillRect(o.x, o.y, o.w, o.h);
-            ctx.fillStyle = '#ffd700'; ctx.beginPath(); ctx.arc(o.x+o.w/2, o.y+o.h/2, 12, 0, Math.PI*2); ctx.stroke();
-        }
-
-        function drawDesk(o) {
-            ctx.fillStyle = '#4a2f1a'; ctx.fillRect(o.x, o.y, o.w, o.h);
-            ctx.fillStyle = '#2a1a0a'; ctx.fillRect(o.x+5, o.y+15, 30, 40);
-        }
-
-        function drawPlayer() {
-            const x = Math.floor(player.x - player.w / 2);
-            const y = Math.floor(player.y - player.h);
-            // Sombra
-            ctx.fillStyle = 'rgba(0,0,0,0.3)';
-            ctx.beginPath(); ctx.ellipse(player.x, y + player.h, 10, 4, 0, 0, Math.PI * 2); ctx.fill();
-            // Cuerpo (Gabardina)
-            ctx.fillStyle = '#2a2a3a'; ctx.fillRect(x + 4, y + 14, 16, 14);
-            // Cabeza y Sombrero
-            ctx.fillStyle = '#f4c99a'; ctx.fillRect(x + 6, y + 4, 12, 10);
-            ctx.fillStyle = '#1a1a1a'; ctx.fillRect(x + 2, y + 4, 20, 3); ctx.fillRect(x + 5, y, 14, 5);
-            // Ojos según dirección
-            ctx.fillStyle = '#000';
-            if (player.dir === 'down') { ctx.fillRect(x + 8, y + 8, 2, 2); ctx.fillRect(x + 14, y + 8, 2, 2); }
-            else if (player.dir === 'left') { ctx.fillRect(x + 6, y + 8, 2, 2); }
-            else if (player.dir === 'right') { ctx.fillRect(x + 16, y + 8, 2, 2); }
-        }
-
-        // LÓGICA
-        function update() {
-            if (game.state !== 'playing') { player.moving = false; return; }
-            let dx = 0, dy = 0;
-            if (input.up) { dy = -player.speed; player.dir = 'up'; }
-            else if (input.down) { dy = player.speed; player.dir = 'down'; }
-            else if (input.left) { dx = -player.speed; player.dir = 'left'; }
-            else if (input.right) { dx = player.speed; player.dir = 'right'; }
-            player.moving = dx !== 0 || dy !== 0;
-            const newX = player.x + dx;
-            const newY = player.y + dy;
-            if (newX > 50 && newX < 590) player.x = newX;
-            if (newY > 105 && newY < 450) player.y = newY;
-        }
-
-        function render() {
+        // RENDERIZADO
+        function draw() {
             const room = rooms[game.currentRoom];
-            // Fondo
-            ctx.fillStyle = room.floor; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            // Paredes
+            
+            // Fondo y Paredes
+            ctx.fillStyle = room.floor;
+            ctx.fillRect(0,0,640,480);
             ctx.fillStyle = room.wall;
-            ctx.fillRect(0, 0, canvas.width, 100);
-            ctx.fillRect(0, 0, 40, canvas.height);
-            ctx.fillRect(canvas.width - 40, 0, 40, canvas.height);
-            ctx.fillRect(0, canvas.height - 20, canvas.width, 20);
+            ctx.fillRect(0,0,640,120); // Pared norte
+            ctx.fillRect(0,0,40,480);   // Oeste
+            ctx.fillRect(600,0,40,480); // Este
 
-            // Ordenar por profundidad
-            const drawables = [
-                ...room.objects.map(o => ({ type: 'obj', obj: o, depth: o.y + o.h })),
-                { type: 'player', depth: player.y }
-            ].sort((a, b) => a.depth - b.depth);
+            // Objetos
+            room.objects.forEach(o => {
+                ctx.fillStyle = '#3a2a1a';
+                if(o.id === 'chimenea') ctx.fillStyle = '#222';
+                if(o.id === 'alfombra') ctx.fillStyle = '#511';
+                if(o.id === 'reloj') ctx.fillStyle = '#420';
+                if(o.id.includes('puerta')) ctx.fillStyle = '#321';
+                
+                ctx.fillRect(o.x, o.y, o.w, o.h);
+                ctx.strokeStyle = '#d4af37';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(o.x, o.y, o.w, o.h);
 
-            drawables.forEach(d => {
-                if (d.type === 'obj') {
-                    d.obj.draw(d.obj);
-                    // Brillo si está cerca
-                    const dist = Math.hypot(player.x - (d.obj.x + d.obj.w/2), player.y - (d.obj.y + d.obj.h/2));
-                    if (dist < 60 && game.state === 'playing') {
-                        ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 2;
-                        ctx.setLineDash([4, 2]); ctx.strokeRect(d.obj.x-4, d.obj.y-4, d.obj.w+8, d.obj.h+8);
-                        ctx.setLineDash([]);
-                        ctx.fillStyle = '#ffd700'; ctx.font = 'bold 10px Courier'; ctx.textAlign = 'center';
-                        ctx.fillText(d.obj.label.toUpperCase(), d.obj.x + d.obj.w/2, d.obj.y - 15);
-                    }
-                } else { drawPlayer(); }
+                // Indicador de interacción
+                const d = Math.hypot(player.x - (o.x + o.w/2), player.y - (o.y + o.h/2));
+                if(d < 60 && game.state === 'playing') {
+                    ctx.fillStyle = '#d4af37';
+                    ctx.font = '10px Courier';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(o.label, o.x + o.w/2, o.y - 10);
+                }
             });
 
-            // Viñeta ambiente
-            const grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 100, canvas.width/2, canvas.height/2, 450);
-            grad.addColorStop(0, 'transparent'); grad.addColorStop(1, 'rgba(0,0,0,0.6)');
-            ctx.fillStyle = grad; ctx.fillRect(0,0,canvas.width, canvas.height);
+            // Personaje
+            ctx.fillStyle = '#f4c99a'; // Piel
+            ctx.fillRect(player.x-10, player.y-30, 20, 10); // Cabeza
+            ctx.fillStyle = '#223'; // Ropa
+            ctx.fillRect(player.x-12, player.y-20, 24, 20); // Torso
+            ctx.fillStyle = '#000'; // Sombrero
+            ctx.fillRect(player.x-15, player.y-32, 30, 4);
+
+            // EFECTO DE LINTERNA (Dificultad Visual)
+            const grad = ctx.createRadialGradient(player.x, player.y-15, 20, player.x, player.y-15, 180);
+            grad.addColorStop(0, 'rgba(0,0,0,0)');
+            grad.addColorStop(1, 'rgba(0,0,0,0.95)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0,0,640,480);
+        }
+
+        function update() {
+            if(game.state !== 'playing') return;
+            
+            let moveX = 0, moveY = 0;
+            if(keys.up) moveY = -player.speed;
+            if(keys.down) moveY = player.speed;
+            if(keys.left) moveX = -player.speed;
+            if(keys.right) moveX = player.speed;
+
+            const nextX = player.x + moveX;
+            const nextY = player.y + moveY;
+
+            // Colisiones básicas
+            if(nextX > 55 && nextX < 585) player.x = nextX;
+            if(nextY > 130 && nextY < 460) player.y = nextY;
         }
 
         // ACCIONES
-        function interact() {
-            if (game.state === 'dialog') { showNextDialog(); return; }
-            if (game.state !== 'playing') return;
+        function handleAction() {
+            if(game.state === 'dialog') { closeDialog(); return; }
+            if(game.state !== 'playing') return;
+
             const room = rooms[game.currentRoom];
-            for (const obj of room.objects) {
-                const dist = Math.hypot(player.x - (obj.x + obj.w/2), player.y - (obj.y + obj.h/2));
-                if (dist < 60) { handleAction(obj.action, obj); return; }
-            }
-        }
+            const obj = room.objects.find(o => Math.hypot(player.x - (o.x + o.w/2), player.y - (o.y + o.h/2)) < 60);
+            
+            if(!obj) return;
+            playNote(220, 0.05);
 
-        function handleAction(action, obj) {
-            switch(action) {
-                case 'readNote':
-                    showDialog(["Una nota polvorienta descansa sobre la mesa...", "\"La llave de la verdad no está a la vista, sino bajo los pies de quien busca.\"", "Parece una referencia a la alfombra del vestíbulo."]);
-                    game.flags.notaLeida = true;
-                    break;
-                case 'searchRug':
-                    if (!game.flags.notaLeida) showDialog(["Una alfombra de lana fina. No parece haber nada especial."]);
-                    else if (!game.flags.llaveEncontrada) {
-                        showDialog(["Levantas el pesado tejido...", "¡Una llave dorada! Estaba oculta en una trampilla bajo la alfombra."]);
-                        game.inventory.push('🔑 Llave Dorada');
-                        game.flags.llaveEncontrada = true;
+            switch(obj.action) {
+                case 'lookArmor': showDialog(["Una armadura del siglo XVII. Falta el guantelete derecho.", "Hay una inscripción: 'El tiempo es la llave de la memoria'."]); break;
+                case 'lookFire': showDialog(["Cenizas frías. Al fondo veo un trozo de papel quemado.", "Solo se lee: '...la suma de los libros rojos es el primer dígito...'"]); game.flags.nota = true; break;
+                case 'checkRug': 
+                    if(game.flags.nota && !game.flags.llave) {
+                        showDialog(["Bajo la alfombra encuentras un mecanismo oxidado.", "¡Has obtenido la LLAVE DE BRONCE!"]);
+                        game.inventory.push("Llave de Bronce");
+                        game.flags.llave = true;
                         updateHUD();
-                    } else showDialog(["Ya no queda nada bajo la alfombra."]);
+                    } else {
+                        showDialog(["Una alfombra polvorienta. Huele a humedad."]);
+                    }
                     break;
-                case 'goLibrary':
-                    if (!game.flags.llaveEncontrada) showDialog(["La puerta está cerrada. El mecanismo requiere una llave de oro."]);
-                    else { changeRoom('biblioteca'); }
+                case 'enterBib': 
+                    if(game.flags.llave) {
+                        game.currentRoom = 'biblioteca';
+                        player.x = rooms.biblioteca.start.x;
+                        player.y = rooms.biblioteca.start.y;
+                        updateHUD();
+                    } else showDialog(["La puerta está cerrada. Necesitas una llave."]);
                     break;
-                case 'goEntrance': changeRoom('entrada'); break;
-                case 'readBook1': showDialog(["'Crónicas del Tiempo': Un pasaje está subrayado...", "\"La puerta del estudio solo se rinde ante la hora final de la tarde.\""]); break;
-                case 'readBook2': showDialog(["'Secretos Numéricos':", "\"En las cerraduras de código, el tiempo se escribe como un solo número puro.\""]); break;
-                case 'readBook3': showDialog(["'Memorias de Valdez':", "\"A las 3:07 comenzó el declive de esta familia...\""]); break;
-                case 'lookClock': showDialog(["El reloj de péndulo se detuvo exactamente a las 3:07.", "Las manecillas parecen estar soldadas en esa posición."]); game.flags.relojMirado = true; break;
-                case 'goStudy':
-                    if (game.flags.estudioAbierto) changeRoom('estudio');
-                    else showPuzzle({
-                        title: 'PUERTA CERRADA',
-                        text: 'Un panel digital antiguo espera un código de 3 dígitos.',
-                        hint: '¿Cuál era la hora detenida en el reloj?',
-                        answer: '307',
-                        onSolve: () => { game.flags.estudioAbierto = true; showDialog(["¡CLIC!", "La puerta se desbloquea con un zumbido eléctrico."], () => changeRoom('estudio')); }
-                    });
+                case 'readHist': showDialog(["Cientos de libros. Cuentas 7 tomos rojos.", "Uno de ellos tiene un marcador en la página 14."]); game.flags.pistaLibro = true; break;
+                case 'lookClock': showDialog(["El péndulo oscila lentamente. Marca las 10:25.", "Parece que el segundero está atascado en el número 4."]); game.flags.pistaReloj = true; break;
+                case 'checkDesk': showDialog(["Un escritorio con manchas de tinta fresca.", "Alguien escribió apurado: 'Dígito central = Horas del reloj - 3'."]); break;
+                case 'enterEnt': game.currentRoom = 'entrada'; player.x = 550; player.y = 230; updateHUD(); break;
+                case 'enterEst': 
+                    if(game.flags.pistaReloj) {
+                        game.currentRoom = 'estudio';
+                        player.x = rooms.estudio.start.x;
+                        player.y = rooms.estudio.start.y;
+                        updateHUD();
+                    } else showDialog(["La puerta al estudio requiere un código mental que aún no comprendes."]);
                     break;
-                case 'lookPainting': showDialog(["Un retrato del fundador. En el marco de oro se lee: 'Establecido en 1895'."]); game.flags.cuadroMirado = true; break;
-                case 'searchDesk': showDialog(["En el cajón secreto encuentras una nota del Mayordomo:", "\"La suma de los años de la fundación es la clave de mi retiro.\"", "Se refiere a la suma de los dígitos del año del cuadro."]); break;
-                case 'openSafe':
-                    showPuzzle({
-                        title: 'CAJA FUERTE',
-                        text: 'Ingrese la suma de los dígitos del año de fundación (1895).',
-                        hint: '1 + 8 + 9 + 5 = ?',
-                        answer: '23',
-                        onSolve: () => { game.flags.culpableDescubierto = true; endGame(); }
-                    });
+                case 'lookPortrait': showDialog(["El Sr. Valdez. Sus ojos parecen seguirte.", "En su anillo se ve grabado el número 9."]); game.flags.pistaCuadro = true; break;
+                case 'lookCandle': showDialog(["Cera derretida. Alguien estuvo aquí hace poco."]); break;
+                case 'solveSafe': 
+                    openPuzzle("CAJA FUERTE", "Ingresa el código de 3 dígitos.", "Pistas: Libros Rojos | Reloj-3 | Anillo", "779");
                     break;
-                case 'lookPot': showDialog(["Una planta que no ha visto agua en años."]); break;
+                case 'enterBibFromEst': game.currentRoom = 'biblioteca'; player.x = 550; player.y = 230; updateHUD(); break;
             }
         }
 
-        function changeRoom(id) {
-            game.currentRoom = id;
-            player.x = rooms[id].playerStart.x;
-            player.y = rooms[id].playerStart.y;
-            player.dir = rooms[id].playerStart.dir;
-            updateHUD();
-        }
-
-        function updateHUD() {
-            locationEl.textContent = '📍 ' + rooms[game.currentRoom].name;
-            inventoryEl.textContent = '🎒 ' + (game.inventory.length ? game.inventory.join(', ') : 'vacío');
-        }
-
-        // DIÁLOGO (Efecto de máquina de escribir)
-        let dialogQueue = [];
-        let dialogCallback = null;
-        let isTyping = false;
-
-        function showDialog(lines, callback = null) {
-            dialogQueue = [...lines];
-            dialogCallback = callback;
+        // UI HELPERS
+        function showDialog(lines) {
             game.state = 'dialog';
-            showNextDialog();
+            document.getElementById('dialog-box').classList.remove('hidden');
+            document.getElementById('dialog-text').textContent = lines.join(' ');
+        }
+        function closeDialog() {
+            game.state = 'playing';
+            document.getElementById('dialog-box').classList.add('hidden');
+        }
+        function updateHUD() {
+            document.getElementById('location').textContent = '📍 ' + rooms[game.currentRoom].name;
+            document.getElementById('inventory').textContent = '🎒 ' + (game.inventory.length ? game.inventory.join(', ') : 'Vacío');
         }
 
-        function showNextDialog() {
-            if (isTyping) return;
-            if (dialogQueue.length === 0) {
-                dialogBox.classList.add('hidden');
-                game.state = 'playing';
-                if (dialogCallback) { let cb = dialogCallback; dialogCallback = null; cb(); }
-                return;
-            }
-            const text = dialogQueue.shift();
-            dialogBox.classList.remove('hidden');
-            typeWriter(text);
-        }
-
-        function typeWriter(text) {
-            isTyping = true;
-            dialogText.textContent = '';
-            let i = 0;
-            const interval = setInterval(() => {
-                dialogText.textContent += text[i];
-                i++;
-                if (i >= text.length) { clearInterval(interval); isTyping = false; }
-            }, 25);
-        }
-
-        // PUZZLE
-        function showPuzzle(p) {
+        // PUZZLE SYSTEM
+        let currentAnswer = "";
+        function openPuzzle(title, desc, hint, ans) {
             game.state = 'puzzle';
-            puzzleOverlay.classList.remove('hidden');
-            puzzleContent.innerHTML = `
-                <h2 style="color:#ffd700;margin-bottom:10px">${p.title}</h2>
-                <p>${p.text}</p>
-                <input type="number" id="p-input" class="puzzle-input" placeholder="000">
-                <p style="font-size:11px;color:#aaa">${p.hint}</p>
-                <button id="p-sub" class="menu-btn" style="margin-top:15px">ENVIAR</button>
-                <button id="p-can" class="menu-btn" style="margin-top:15px;background:#444">CANCELAR</button>
-            `;
-            const inputEl = document.getElementById('p-input');
-            inputEl.focus();
-            document.getElementById('p-sub').onclick = () => {
-                if (inputEl.value === p.answer) {
-                    puzzleOverlay.classList.add('hidden');
-                    game.state = 'playing';
-                    p.onSolve();
-                } else {
-                    inputEl.style.borderColor = 'red';
-                    setTimeout(() => inputEl.style.borderColor = '#ffd700', 500);
-                }
-            };
-            document.getElementById('p-can').onclick = () => {
-                puzzleOverlay.classList.add('hidden');
-                game.state = 'playing';
-            };
+            currentAnswer = ans;
+            document.getElementById('puzzle-overlay').classList.remove('hidden');
+            document.getElementById('p-title').textContent = title;
+            document.getElementById('p-desc').textContent = desc + " (" + hint + ")";
+            document.getElementById('p-input').value = "";
+            document.getElementById('p-input').focus();
         }
 
-        function endGame() {
-            game.state = 'end';
-            endScreen.classList.remove('hidden');
-            endText.innerHTML = "¡La caja fuerte se abre!<br><br>Dentro hay un diario confesando que el <strong>Mayordomo</strong> planeó todo para culpar al jardinero.<br><br>Has resuelto el misterio.";
-        }
+        document.getElementById('p-check').onclick = () => {
+            if(document.getElementById('p-input').value === currentAnswer) {
+                document.getElementById('puzzle-overlay').classList.add('hidden');
+                game.state = 'end';
+                document.getElementById('end-screen').classList.remove('hidden');
+                document.getElementById('end-text').innerHTML = "¡La caja fuerte se abre! <br><br> Recuperas la Lágrima de Sangre. El culpable dejó una carta: era el sobrino Valdez, intentando pagar sus deudas de juego. <br><br> ¡Caso resuelto, Detective!";
+            } else {
+                playNote(100, 0.3, 'square');
+                document.getElementById('p-input').style.borderColor = 'red';
+                setTimeout(()=> document.getElementById('p-input').style.borderColor = '#d4af37', 500);
+            }
+        };
+        document.getElementById('p-cancel').onclick = () => {
+            document.getElementById('puzzle-overlay').classList.add('hidden');
+            game.state = 'playing';
+        };
 
         // INPUTS
-        const keyMap = { 'ArrowUp': 'up', 'w': 'up', 'ArrowDown': 'down', 's': 'down', 'ArrowLeft': 'left', 'a': 'left', 'ArrowRight': 'right', 'd': 'right' };
-        window.addEventListener('keydown', e => { if (keyMap[e.key]) input[keyMap[e.key]] = true; if (e.key === 'e' || e.key === ' ') interact(); });
-        window.addEventListener('keyup', e => { if (keyMap[e.key]) input[keyMap[e.key]] = false; });
-
-        document.querySelectorAll('.dpad-btn').forEach(btn => {
-            const dir = btn.dataset.dir;
-            btn.onpointerdown = e => { e.preventDefault(); input[dir] = true; btn.classList.add('pressed'); };
-            btn.onpointerup = btn.onpointerleave = () => { input[dir] = false; btn.classList.remove('pressed'); };
-        });
-
-        actionBtn.onpointerdown = e => { e.preventDefault(); interact(); };
-        dialogBox.onclick = showNextDialog;
-
-        // AUDIO (Simplificado)
-        let audioCtx, musicEnabled = true;
-        muteBtn.onclick = () => { 
-            musicEnabled = !musicEnabled; 
-            muteBtn.textContent = musicEnabled ? '🔊 MÚSICA: ON' : '🔇 MÚSICA: OFF';
-            if (audioCtx) musicEnabled ? audioCtx.resume() : audioCtx.suspend();
-        };
-
         startBtn.onclick = () => {
-            startScreen.classList.add('hidden');
-            touchControls.classList.remove('hidden');
+            initAudio();
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('touch-controls').classList.remove('hidden');
             game.state = 'playing';
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            updateHUD();
         };
+
+        audioToggle.onclick = () => {
+            isMuted = !isMuted;
+            audioToggle.textContent = isMuted ? '🔇 SONIDO: DESACTIVADO' : '🔊 SONIDO: ACTIVADO';
+        };
+
+        window.onkeydown = e => {
+            if(e.key.includes('Arrow')) keys[e.key.replace('Arrow','').toLowerCase()] = true;
+            if(e.key === 'w') keys.up = true; if(e.key === 's') keys.down = true;
+            if(e.key === 'a') keys.left = true; if(e.key === 'd') keys.right = true;
+            if(e.key === 'e' || e.key === ' ') handleAction();
+        };
+        window.onkeyup = e => {
+            if(e.key.includes('Arrow')) keys[e.key.replace('Arrow','').toLowerCase()] = false;
+            if(e.key === 'w') keys.up = false; if(e.key === 's') keys.down = false;
+            if(e.key === 'a') keys.left = false; if(e.key === 'd') keys.right = false;
+        };
+
+        document.querySelectorAll('.dpad-btn').forEach(b => {
+            b.onpointerdown = e => { e.preventDefault(); keys[b.dataset.dir] = true; };
+            b.onpointerup = e => { e.preventDefault(); keys[b.dataset.dir] = false; };
+            b.onpointerleave = () => keys[b.dataset.dir] = false;
+        });
+        actionBtn.onpointerdown = e => { e.preventDefault(); handleAction(); };
 
         // LOOP
         function loop() {
             update();
-            render();
+            draw();
             requestAnimationFrame(loop);
         }
         loop();
